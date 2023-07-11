@@ -14,14 +14,19 @@ $user = "root";
 $pass = "";
 $db = "pkk";
 
-$conn = new mysqli($server, $user, $pass, $db);
-if ($conn->connect_error) {
-  die("Connection failed:" . $conn->connect_error);
-} else {
+try {
+  $conn = new mysqli($server, $user, $pass, $db);
+  if ($conn->connect_error) {
+    die("Connection failed:" . $conn->connect_error);
+  }
+
+  $sql = "SELECT * FROM matriks_penilaian_kinerja_lam_infokom";
+  $result = $conn->query($sql);
+  $conn->close();
+} catch (Exception $e) {
+  // echo $e;
 }
 
-$sql = "SELECT * FROM matriks_penilaian_kinerja_lam_infokom";
-$result = $conn->query($sql);
 ?>
 
 <?php include "header.html" ?>
@@ -32,7 +37,7 @@ $result = $conn->query($sql);
 
 <table>
   <tr>
-    <th><a href="#pesan" data-toggle="modal">Kriteria</a></th>
+    <th><a data-bs-toggle="modal" href="#modal-1">Kriteria</a></th>
     <th>Jenis</th>
     <th>No. Urut</th>
     <th>No. Butir</th>
@@ -45,7 +50,7 @@ $result = $conn->query($sql);
     <th>Kurang = 1</th>
   </tr>
   <?php
-  if ($result->num_rows > 0) {
+  if (isset($result) && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
       echo "<tr><td>" . $row["Kriteria"] . "</td><td>" . $row["Jenis"] .
         "</td><td>" . $row["No_Urut"] . "</td><td>" . $row["No_Butir"] . "</td><td>" .
@@ -54,13 +59,12 @@ $result = $conn->query($sql);
         $row["Ket2"] . "</td><td>"  . $row["Ket3"] . "</td><td>" . $row["Ket4"] . "</td></tr>";
     }
   } else {
-    echo "Data tidak tersedia :(";
+    echo "Data tidak tersedia :v";
   }
-  $conn->close();
   ?>
 </table>
 
-<div class="modal fade" id="pesan" role="dialog">
+<div class="modal fade" id="modal-1" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -84,28 +88,10 @@ $result = $conn->query($sql);
           Kriteria E Rencana Pengembangan</p>
       </div>
       <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal" tabindex="-1" id="mod">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Modal body text goes here.</p>
-      </div>
-      <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
 </div>
 
-  <?php include "footer.html" ?>
+<?php include "footer.html" ?>
